@@ -22,7 +22,6 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, FileType
 from importlib import import_module
 from importlib.util import find_spec
 from ..version import version
-from .main_mapper import mapper_core
 from .main_balanser import balanser_core
 from .main_condenser import condenser_core
 from .main_fear import fear_core
@@ -111,20 +110,6 @@ def fear(subparsers):
     parser.set_defaults(func=fear_core)
 
 
-def reactmap(subparsers):
-    parser = subparsers.add_parser('reactmap', help='reaction atom-to-atom mapper (AAM)',
-                                   formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--input", "-i", default="input.rdf", type=FileType(), help="RDF inputfile")
-    parser.add_argument("--output", "-o", default="output.rdf", type=FileType('w'), help="RDF outputfile")
-    parser.add_argument("--templates", "-t", type=FileType(), help="RDF with reactions mapping rules")
-    parser.add_argument("--dump_templates", "-d", default="dump.rdf", type=FileType('w'),
-                        help="save RDF with reactions mapping rules")
-
-    stereo_common(parser)
-
-    parser.set_defaults(func=mapper_core)
-
-
 def parse_args():
     parser = ArgumentParser(description="CGRtools", epilog="(c) Dr. Ramil Nugmanov", prog='cgrtools')
     parser.add_argument("--version", "-v", action="version", version=version(), default=False)
@@ -133,7 +118,6 @@ def parse_args():
     condenser(subparsers)
     balanser(subparsers)
     fear(subparsers)
-    reactmap(subparsers)
 
     if find_spec('argcomplete'):
         argcomplete = import_module('argcomplete')
