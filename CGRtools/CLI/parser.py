@@ -19,7 +19,6 @@
 #  MA 02110-1301, USA.
 #
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, FileType
-from importlib import import_module
 from importlib.util import find_spec
 from ..version import version
 from .main_balanser import balanser_core
@@ -110,7 +109,7 @@ def fear(subparsers):
     parser.set_defaults(func=fear_core)
 
 
-def parse_args():
+def argparser():
     parser = ArgumentParser(description="CGRtools", epilog="(c) Dr. Ramil Nugmanov", prog='cgrtools')
     parser.add_argument("--version", "-v", action="version", version=version(), default=False)
     subparsers = parser.add_subparsers(title='subcommands', description='available utilities')
@@ -120,7 +119,7 @@ def parse_args():
     fear(subparsers)
 
     if find_spec('argcomplete'):
-        argcomplete = import_module('argcomplete')
-        argcomplete.autocomplete(parser)
+        from argcomplete import autocomplete
+        autocomplete(parser)
 
     return parser
