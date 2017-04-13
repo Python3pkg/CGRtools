@@ -52,7 +52,7 @@ class CGRcore(object):
     def dissCGR(self, g):
         tmp = ReactionContainer(meta=g.meta)
         for category, (edge, pattern) in self.__disstemplate.items():
-            components, *_ = CGRreactor.get_bond_broken_graph(g, pattern, gis.categorical_edge_match(edge, None))
+            components, *_ = CGRreactor.getbondbrokengraph(g, pattern, gis.categorical_edge_match(edge, None))
             for mol in components:
                 for n, m, edge_attr in mol.edges(data=True):
                     for i, j in self.__attrcompose['edges'][category].items():
@@ -127,7 +127,9 @@ class CGRcore(object):
         return dict(substrats=substrats or MoleculeContainer(), products=products or MoleculeContainer())
 
     @staticmethod
-    def set_labels(g):
+    def set_labels(g, copy=True):
+        if copy:
+            g = g.copy()
         for i in g.nodes():
             label = {'s_hyb': 1, 'p_hyb': 1, 'sp_hyb': 1, 's_neighbors': 0, 'p_neighbors': 0, 'sp_neighbors': 0}
             #  hyb 1- sp3; 2- sp2; 3- sp1; 4- aromatic

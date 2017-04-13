@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2014, 2015 Ramil Nugmanov <stsouko@live.ru>
+#  Copyright 2014-2016 Ramil Nugmanov <stsouko@live.ru>
 #  This file is part of CGRtools.
 #
 #  CGRtools is free software; you can redistribute it and/or modify
@@ -20,17 +20,18 @@
 #
 import sys
 import traceback
-from ..files.RDFrw import RDFread, RDFwrite
+from ..files.RDFrw import RDFread
+from ..files.SDFrw import SDFwrite
 from ..CGRpreparer import CGRcombo
 
 
-def balanser_core(**kwargs):
+def condenser_core(**kwargs):
     inputdata = RDFread(kwargs['input'])
-    outputdata = RDFwrite(kwargs['output'], extralabels=kwargs['save_extralabels'])
+    outputdata = SDFwrite(kwargs['output'], extralabels=kwargs['save_extralabels'])
 
     worker = CGRcombo(cgr_type=kwargs['cgr_type'], extralabels=kwargs['extralabels'],
                       b_templates=kwargs['b_templates'], m_templates=kwargs['m_templates'], stereo=kwargs['stereo'],
-                      isotope=kwargs['isotope'], element=kwargs['element'], deep=kwargs['deep'])
+                      isotope=kwargs['isotope'], element=kwargs['element'])
 
     err = 0
     num = 0
@@ -39,9 +40,10 @@ def balanser_core(**kwargs):
             print("reaction: %d" % num, file=sys.stderr)
         try:
             a = worker.getCGR(data)
-            a = worker.dissCGR(a)
             outputdata.write(a)
         except Exception:
             err += 1
             print('reaction %d consist errors: %s' % (num, traceback.format_exc()), file=sys.stderr)
-    print('%d from %d reactions balanced' % (num - err, num), file=sys.stderr)
+    print('%d from %d reactions condensed' % (num - err, num), file=sys.stderr)
+
+    return 0 if num and not err else 1 if num - err else 2

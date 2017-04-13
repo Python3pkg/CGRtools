@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-# PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2014-2016 Ramil Nugmanov <stsouko@live.ru>
+#  Copyright 2014, 2015 Ramil Nugmanov <stsouko@live.ru>
 #  This file is part of CGRtools.
 #
 #  CGRtools is free software; you can redistribute it and/or modify
@@ -20,8 +18,3 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #
-from CGRtools.CLI import launcher
-
-
-if __name__ == '__main__':
-    launcher()

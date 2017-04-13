@@ -19,7 +19,6 @@
 #  MA 02110-1301, USA.
 #
 import networkx as nx
-import operator
 from itertools import product, combinations
 from networkx.algorithms import isomorphism as gis
 from .files.RDFrw import RDFread
@@ -46,8 +45,9 @@ def patcher(matrix):
                     a[j] = a[j][s.edge[m][n][j]]
 
     s.remove_edges_from(combinations(common, 2))
-
-    return nx.compose(s, p)
+    composed = nx.compose(s, p)
+    composed.meta.update(s.meta)
+    return composed
 
 
 def list_eq(a, b):
@@ -62,7 +62,7 @@ class CGRreactor(object):
     def __init__(self, stereo=False, hyb=False, neighbors=False, isotope=False, element=True):
         self.__rctemplate = self.__reactioncenter()
 
-        gnm_sp, gem_sp, pcem, pcnm = ['sp_bond'], [], ['p_bond'], ['element', 'p_charge']
+        gnm_sp, gem_sp, pcem, pcnm = [], ['sp_bond'], ['p_bond'], ['element', 'p_charge']
         if isotope:
             gnm_sp.append('isotope')
             pcnm.append('isotope')
@@ -108,7 +108,7 @@ class CGRreactor(object):
         return searcher
 
     @staticmethod
-    def get_bond_broken_graph(g, rc_templates, edge_match):
+    def getbondbrokengraph(g, rc_templates, edge_match):
         g = g.copy()
         lose_bonds = {}
         for i in rc_templates:
@@ -125,7 +125,7 @@ class CGRreactor(object):
         components = list(nx.connected_component_subgraphs(g))
         return components, lose_bonds
 
-    def clone_subgraphs(self, g):
+    def clonesubgraphs(self, g):
         r_group = []
         x_group = {}
         r_group_clones = []
@@ -133,7 +133,7 @@ class CGRreactor(object):
 
         ''' search bond breaks and creations
         '''
-        components, lose_bonds = self.get_bond_broken_graph(g, self.__rctemplate, self.__edge_match_only_bond)
+        components, lose_bonds = self.getbondbrokengraph(g, self.__rctemplate, self.__edge_match_only_bond)
         lose_map = {x: y for x, y in lose_bonds}
         ''' extract subgraphs and sort by group type (R or X)
         '''

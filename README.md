@@ -1,5 +1,7 @@
 CGRTools
 =========
+DEPRECATED version.
+
 CGR based reaction manipulations.
 
 

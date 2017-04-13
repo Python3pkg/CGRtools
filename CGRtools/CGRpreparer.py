@@ -54,7 +54,7 @@ class CGRbalanser(CGRreactor):
     def prepare(self, g):
         report = []
         if self.__balanse_groups:
-            g = self.clone_subgraphs(g)
+            g = self.clonesubgraphs(g)
 
         while True:
             match = next(self.__searcher(g), None)

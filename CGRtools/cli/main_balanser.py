@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  Copyright 2015, 2016 Ramil Nugmanov <stsouko@live.ru>
+#  Copyright 2014, 2015 Ramil Nugmanov <stsouko@live.ru>
 #  This file is part of CGRtools.
 #
 #  CGRtools is free software; you can redistribute it and/or modify
@@ -21,30 +21,27 @@
 import sys
 import traceback
 from ..files.RDFrw import RDFread, RDFwrite
-from ..Reactmap import ReactMap
+from ..CGRpreparer import CGRcombo
 
 
-def mapper_core(**kwargs):
+def balanser_core(**kwargs):
     inputdata = RDFread(kwargs['input'])
-    outputdata = RDFwrite(kwargs['output'])
-    mapper = ReactMap(**kwargs)
+    outputdata = RDFwrite(kwargs['output'], extralabels=kwargs['save_extralabels'])
+
+    worker = CGRcombo(cgr_type=kwargs['cgr_type'], extralabels=kwargs['extralabels'],
+                      b_templates=kwargs['b_templates'], m_templates=kwargs['m_templates'], stereo=kwargs['stereo'],
+                      isotope=kwargs['isotope'], element=kwargs['element'])
+
     err = 0
     num = 0
-
     for num, data in enumerate(inputdata, start=1):
         if num % 100 == 1:
             print("reaction: %d" % num, file=sys.stderr)
         try:
-            a = mapper.map(data)
+            a = worker.getCGR(data)
+            a = worker.dissCGR(a)
             outputdata.write(a)
         except Exception:
             err += 1
-            print('reaction: %d' % num, file=sys.stderr)
             print('reaction %d consist errors: %s' % (num, traceback.format_exc()), file=sys.stderr)
-            break
-
-    dump = RDFwrite(kwargs['dump_templates'])
-    for i in mapper.templates:
-        dump.write(i)
-
-    print('%d from %d reactions mapped' % (num - err, num), file=sys.stderr)
+    print('%d from %d reactions balanced' % (num - err, num), file=sys.stderr)
